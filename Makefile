@@ -30,24 +30,24 @@ export PATH:=$(PREFIX)/bin:$(PATH)
 
 INSTALL_DIR=/opt/cross/h8300-elf-x-tools
 
-BINUTILS_VER=2.16.1
-GCC_VER=4.4.6
-NEWLIB_VER=1.20.0
-GMP_VER=5.1.2
-MPFR_VER=3.1.2
-MPC_VER=1.0.1
+BINUTILS_VER=2.25
+GCC_VER=4.9.2
+NEWLIB_VER=2.2.0
+GMP_VER=6.0.0
+MPFR_VER=3.1.3
+MPC_VER=1.0.3
 
-BINUTILS_SRC="binutils-$(BINUTILS_VER)"
-GCC_SRC="gcc-$(GCC_VER)"
-NEWLIB_SRC="newlib-$(NEWLIB_VER)"
-GMP_SRC="gmp-$(GMP_VER)"
-MPFR_SRC="mpfr-$(MPFR_VER)"
-MPC_SRC="mpc-$(MPC_VER)"
+BINUTILS_SRC=binutils-$(BINUTILS_VER)
+GCC_SRC=gcc-$(GCC_VER)
+NEWLIB_SRC=newlib-$(NEWLIB_VER)
+GMP_SRC=gmp-$(GMP_VER)
+MPFR_SRC=mpfr-$(MPFR_VER)
+MPC_SRC=mpc-$(MPC_VER)
 
-ABI_MODE='ABI=32'
-CC='gcc -m32'
+ABI_MODE='ABI=64'
+CC='gcc'
 
-all: get-packages extract patch build
+all: get-packages extract build
 
 get-packages:
 	@echo
@@ -69,7 +69,7 @@ patch:
 	patch -p1 -d $(GCC_SRC) < patches/$(GCC_SRC).patch
 	@echo 
 
-build: build-gmp build-mpfr build-mpc build-binutils build-gcc-1 build-newlib build-gcc-2 strip
+build: build-gmp build-mpfr build-mpc build-binutils build-gcc-1 build-newlib build-gcc-2 
 
 build-gmp:
 	@echo 
@@ -173,12 +173,6 @@ build-gcc-2:
 	export LIBRARY_PATH=/usr/lib/i386-linux-gnu:$(LIBRARY_PATH);\
 	make;\
 	make install
-strip:
-	-$(foreach file,$(PREFIX)/bin/*,strip $(file))
-	-$(foreach file,$(PREFIX)/$(TARGET)/bin/*,strip $(file))
-	-$(foreach file,$(PREFIX)/libexec/gcc/$(TARGET)/$(GCC_VER)/*,strip $(file))
-	find $(PREFIX) -name "crt0.o" -exec rm {} \;
-	find $(PREFIX) -name "*.la" -exec rm {} \;
 
 .PHONY: install
 install:
